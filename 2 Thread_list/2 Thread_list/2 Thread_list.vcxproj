@@ -19,9 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{BB114756-805B-4452-A562-8E5C29193F25}</ProjectGuid>
+    <ProjectGuid>{81668AE3-891B-4980-8644-F09532F34B0E}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>My1_ThreadBasic</RootNamespace>
+    <RootNamespace>My2Thread_list</RootNamespace>
     <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -146,7 +146,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

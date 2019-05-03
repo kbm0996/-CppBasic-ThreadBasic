@@ -28,7 +28,7 @@ void main()
 	HANDLE hDisconnectThread = (HANDLE)_beginthreadex(NULL, 0, DisconnectThread, (void*)1, 0, NULL);
 	HANDLE	hUpdateThread[df_UPDATE_THREAD_MAX];
 	for (int iCnt = 0; iCnt < df_UPDATE_THREAD_MAX; ++iCnt)
-		hUpdateThread[iCnt] = (HANDLE)_beginthreadex(NULL, 0, UpdateThread, 0, 0,NULL);
+		hUpdateThread[iCnt] = (HANDLE)_beginthreadex(NULL, 0, UpdateThread, 0, 0, NULL);
 
 	while (!g_bShutdown)
 	{
@@ -74,7 +74,7 @@ void main()
 UINT __stdcall AcceptThread(LPVOID lpParam)
 {
 	// The seed value of rand() is applied separately for each thread
-	srand((unsigned int)(time(NULL) + GetCurrentThreadId() + (UINT)lpParam));
+	srand((UINT)time(NULL) + GetCurrentThreadId() + (UINT)lpParam);
 
 	while (!g_bShutdown)
 	{
@@ -91,7 +91,7 @@ UINT __stdcall AcceptThread(LPVOID lpParam)
 UINT __stdcall DisconnectThread(LPVOID lpParam)
 {
 	// The seed value of `rand()` is applied separately for each thread
-	srand((unsigned int)(time(NULL) + GetCurrentThreadId()));
+	srand((UINT)time(NULL) + GetCurrentThreadId());
 
 	while (!g_bShutdown)
 	{
@@ -115,7 +115,7 @@ UINT __stdcall UpdateThread(LPVOID lpParam)
 		///EnterCriticalSection(&cs);	// *Wrong Use :: Not multi-threaded
 		EnterCriticalSection(&g_cs);	// *Correct Use :: Lock only when necessary
 		++g_Data;
-		if (g_Data % 1000 == 0)	
+		if (g_Data % 1000 == 0)
 			wprintf(L"[%d]	UpdateThread() #	g_Data : %lld \n", GetCurrentThreadId(), g_Data);
 		LeaveCriticalSection(&g_cs);
 		///LeaveCriticalSection(&cs);
