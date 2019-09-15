@@ -6,10 +6,12 @@
 #include <conio.h>
 #pragma comment(lib, "Winmm.lib")
 #include "CRingBuffer.h"
+#include <random>
 
 using namespace std;
 
-#define df_WORKER_MAX 10
+#define df_UPDATE_THREAD_MAX 10
+#define df_INTERVAL_PUSH	100
 
 //-----------------------------------------------
 // Message Structure
@@ -44,34 +46,35 @@ mylib::CRingBuffer	g_MsgQ(50000);
 bool g_bShutdown;
 HANDLE g_hEvent;
 
-UINT __stdcall WorkerThread(LPVOID lpParam);
+int64_t rand(const int64_t & min, const int64_t & max);
+
+UINT __stdcall UpdateThread(LPVOID lpParam);
 
 void main()
 {
 	timeBeginPeriod(1);
 	InitializeSRWLock(&g_ListCs);
-	srand((unsigned int)time(NULL));
+	///srand((unsigned int)time(NULL));
 
 	g_hEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 
-	HANDLE hWorkerThread[df_WORKER_MAX];
-	for (int iCnt = 0; iCnt < df_WORKER_MAX; ++iCnt)
-		hWorkerThread[iCnt] = (HANDLE)_beginthreadex(NULL, 0, WorkerThread, 0, 0, NULL);
+	HANDLE hUpdateThread[df_UPDATE_THREAD_MAX];
+	for (int iCnt = 0; iCnt < df_UPDATE_THREAD_MAX; ++iCnt)
+		hUpdateThread[iCnt] = (HANDLE)_beginthreadex(NULL, 0, UpdateThread, 0, 0, NULL);
 
 	WCHAR*	pStr = L"TESTSTRING";
+	int iStrlen = wcslen(pStr);
 	while (1)
 	{
 
-		// 1. Create Message
+		// 1. 메세지 생성
 		//	st_MSG_HEADER.shType = 0~2(Random)
 		//	st_MSG_HEADER.String = wstring(Random)
 		//  "문자열"  < 위 고정 문자열의 범위 내에서 랜덤하게 입력.
-		int iStrPos = rand() % 9;
+		int iStrPos = rand(0, iStrlen-1);/// rand() % iStrlen-1 ;
 		st_MSG_HEADER		stHeader;
-		stHeader.shType = rand() % 3;
-
+		stHeader.shType = rand(0, 2);/// rand() % 3;
 		wcscpy_s(stHeader.String, &pStr[iStrPos]);
-
 		if (_kbhit())
 		{
 			if (_getwch() == L' ')
@@ -94,14 +97,13 @@ void main()
 
 		SetEvent(g_hEvent);
 
-		// Input Interval
-		//TODO: Testing while changing the insertion time
-		Sleep(1);
+		// 입력 간격
+		Sleep(df_INTERVAL_PUSH);
 	}
 
-	WaitForMultipleObjects(df_WORKER_MAX, hWorkerThread, TRUE, INFINITE);
-	for (int iCnt = 0; iCnt < df_WORKER_MAX; ++iCnt)
-		CloseHandle(hWorkerThread[iCnt]);
+	WaitForMultipleObjects(df_UPDATE_THREAD_MAX, hUpdateThread, TRUE, INFINITE);
+	for (int iCnt = 0; iCnt < df_UPDATE_THREAD_MAX; ++iCnt)
+		CloseHandle(hUpdateThread[iCnt]);
 
 	wprintf(L"[%d]	# ", GetCurrentThreadId());
 	for (auto iter = g_List.begin(); iter != g_List.end(); ++iter)
@@ -112,9 +114,17 @@ void main()
 }
 
 
-UINT WINAPI WorkerThread(LPVOID lpParam)
+int64_t rand(const int64_t & min, const int64_t & max)
 {
-	wprintf(L"[%d]	WorkerThread() #	Start\n", GetCurrentThreadId());
+	static std::random_device rnd;
+	static thread_local std::mt19937_64 gen(rnd() + GetCurrentThreadId());
+	std::uniform_int_distribution<int64_t> dist(min, max);
+	return dist(gen);
+}
+
+UINT WINAPI UpdateThread(LPVOID lpParam)
+{
+	wprintf(L"[%d]	UpdateThread() #	Start\n", GetCurrentThreadId());
 
 	bool bShutdown = false;
 	while (1)
@@ -161,15 +171,15 @@ UINT WINAPI WorkerThread(LPVOID lpParam)
 				break;
 			case df_TYPE_QUIT:
 				// TODO: 종료 규칙이 현재 두 개임.
-				// 1. QUIT 메시지를 받은 WorkerThread가 g_bShutdown을 false로 변경하여 while문 탈출. 다른 WorkerThread를 깨움
-				// 2. 깨어난 WorkerThread는 g_bShutdown이 false가 되었기 때문에 탈출
+				// 1. QUIT 메시지를 받은 UpdateThread가 g_bShutdown을 false로 변경하여 while문 탈출. 다른 UpdateThread를 깨움
+				// 2. 깨어난 UpdateThread는 g_bShutdown이 false가 되었기 때문에 탈출
 				//  - 이보다는 종료 규칙이 한 개인게 보다 깔끔함
-				// A. QUIT 메시지를 받은 WorkerThread가 다른 WorkerThread에게 QUIT 메시지를 뿌린다던가..
+				// A. QUIT 메시지를 받은 UpdateThread가 다른 UpdateThread에게 QUIT 메시지를 뿌린다던가..
 				// B. ManualReset으로 해서 모두가 하나의 Msg를 받게 한다던가..
 				bShutdown = true;
 				break;
 			default:
-				wprintf(L"[%d]	WorkerThread() #	Unknown Packet\n", GetCurrentThreadId());
+				wprintf(L"[%d]	UpdateThread() #	Unknown Packet\n", GetCurrentThreadId());
 				break;
 			}
 		}
@@ -189,6 +199,6 @@ UINT WINAPI WorkerThread(LPVOID lpParam)
 		}
 	}
 
-	wprintf(L"[%d]	WorkerThread() #	Exit\n", GetCurrentThreadId());
+	wprintf(L"[%d]	UpdateThread() #	Exit\n", GetCurrentThreadId());
 	return 0;
 }
