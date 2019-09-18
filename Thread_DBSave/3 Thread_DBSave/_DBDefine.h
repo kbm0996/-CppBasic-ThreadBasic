@@ -12,15 +12,11 @@ CREATE TABLE `clearstage` (
 `stageid` int(11) NOT NULL
 ) ENGINE=InnoDB;
 -----------------------------------------------------*/
-#define df_DB_IP		"127.0.0.1"
-#define df_DB_ACCOUNT	"root"
+#define df_DB_IP		L"127.0.0.1"
+#define df_DB_ACCOUNT	L"root"
 #define df_DB_PORT		3306
-#define df_DB_PASS		"1234"
-#define df_DB_NAME		"game_schema"
-
-#define df_RECONNECT_CNT 5
-#define df_THREAD_CNT 2
-#define df_SLEEP_MS 1
+#define df_DB_PASS		L"1234"
+#define df_DB_NAME		L"game_schema"
 
 //--------------------------------------------------------------------------------------------
 // DB 저장 메시지의 헤더
@@ -51,8 +47,8 @@ struct st_DBQUERY_HEADER
 #define df_DBQUERY_MSG_NEW_ACCOUNT		0
 struct st_DBQUERY_MSG_NEW_ACCOUNT
 {
-	char	szID[20];
-	char	szPassword[20];
+	WCHAR	szID[20];
+	WCHAR	szPassword[20];
 };
 
 //--------------------------------------------------------------------------------------------

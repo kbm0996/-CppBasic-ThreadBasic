@@ -148,19 +148,24 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="APIHook.h" />
+    <ClInclude Include="CallHttp.h" />
+    <ClInclude Include="CDBConnector.h" />
+    <ClInclude Include="CDBConnector_TLS.h" />
     <ClInclude Include="CLFMemoryPool.h" />
     <ClInclude Include="CLFMemoryPool_TLS.h" />
+    <ClInclude Include="CLFStack.h" />
     <ClInclude Include="CrashDump.h" />
     <ClInclude Include="CRingBuffer.h" />
     <ClInclude Include="CSystemLog.h" />
-    <ClInclude Include="DBWriter.h" />
     <ClInclude Include="_DBDefine.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="APIHook.cpp" />
+    <ClCompile Include="CallHttp.cpp" />
+    <ClCompile Include="CDBConnector.cpp" />
+    <ClCompile Include="CDBConnector_TLS.cpp" />
     <ClCompile Include="CrashDump.cpp" />
     <ClCompile Include="CRingBuffer.cpp" />
-    <ClCompile Include="DBWriter.cpp" />
     <ClCompile Include="_main.cpp" />
   </ItemGroup>
   <ItemGroup>
