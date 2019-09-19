@@ -44,7 +44,7 @@ void main()
 
 	g_hDBWriterThread = (HANDLE)_beginthreadex(NULL, 0, DBWriterThread, 0, 0, NULL);
 	for (int iCnt = 0; iCnt < df_THREAD_CNT; iCnt++)
-		g_hUpdateThread[iCnt] = (HANDLE)_beginthreadex(NULL, 0, UpdateThread, (void*)iCnt, 0, NULL);
+		g_hUpdateThread[iCnt] = _beginthreadex(NULL,0,UpdateThread,(void*)iCnt,0,0);
 
 	while (!g_bShutdown)
 	{
@@ -61,8 +61,6 @@ void main()
 			wprintf(L"===========================================\n");
 			wprintf(L"DB Write TPS		:  %lld \n", g_WriteTPS);
 			wprintf(L"DB Queue Size		:  %d \n", g_DBQueryBuffer.GetUseSize());
-			//wprintf(L"MemPool Use		:  %d \n", g_DBPacketPool.GetAllocCount());
-			//wprintf(L"MemPool Alloc	:  %d \n", g_DBPacketPool.GetBlockCount());
 			wprintf(L"===========================================\n");
 
 			dwSystemTick = dwCurrentTick;
