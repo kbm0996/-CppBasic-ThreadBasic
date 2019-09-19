@@ -34,7 +34,7 @@ void main()
 	_wsetlocale(LC_ALL, NULL);  // 유니코드를 출력하기 위한 설정
 	LOG_SET(LOG_CONSOLE | LOG_FILE, LOG_DEBUG);
 
-	 pDBConnector = new mylib::CDBConnector_TLS(DB_IP, DB_ACCOUNT, DB_PASS, DB_NAME, DB_PORT);
+	 pDBConnector = new mylib::CDBConnector_TLS(DB_IP,DB_ACCOUNT,DB_PASS,DB_NAME,DB_PORT);
 
     ///////////////////////////////////////////////////////////
     // 이벤트 설정
@@ -59,8 +59,8 @@ void main()
             // 모니터링
             ///////////////////////////////////////////////////////////
 			wprintf(L"===========================================\n");
-			wprintf(L"DB Write TPS		:  %lld \n", g_WriteTPS);
-			wprintf(L"DB Queue Size		:  %d \n", g_DBQueryBuffer.GetUseSize());
+			wprintf(L"DB Write TPS	:  %lld \n", g_WriteTPS);
+			wprintf(L"DB Queue Size	:  %d \n", g_DBQueryBuffer.GetUseSize());
 			wprintf(L"===========================================\n");
 
 			dwSystemTick = dwCurrentTick;
