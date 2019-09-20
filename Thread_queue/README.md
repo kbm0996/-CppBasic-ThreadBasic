@@ -1,4 +1,4 @@
-# 멀티스레드 환경에서 Queue와 list 동기화
+# 멀티스레드 환경에서 Queue 동기화
 ## 📑 구성
 
 **📋 _main** : 메인 함수, UpdateThread 콜백 함수, DBWriteThread
