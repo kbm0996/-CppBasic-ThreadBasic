@@ -58,9 +58,9 @@ void main()
 		Sleep(1); // 스레드가 CPU를 독점하는 현상을 제외하기 위한 Sleep(1)
 	}
     
-    ///////////////////////////////////////////////////////////
-    // 스레드 종료 대기
-    ///////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////
+	// 스레드 종료 대기
+	///////////////////////////////////////////////////////////
 	WaitForMultipleObjects(df_THREAD_CNT, g_hUpdateThread, TRUE, INFINITE);
 	for (unsigned int iCnt = 0; iCnt < df_THREAD_CNT; ++iCnt)
 		CloseHandle(g_hUpdateThread[iCnt]); // 스레드 핸들 반환
@@ -148,4 +148,4 @@ unsigned int __stdcall DBWriterThread(LPVOID lpParam)
 
  다수의 클라이언트가 서버측으로 DB 관련 요청을 보낸다는 상황을 가정한 이벤트 생성 콜백 함수
  
- "\_DBDefine.h"에 명시된 3가지 메세지를 랜덤으로 
+ "\_DBDefine.h"에 명시된 3가지 메세지를 랜덤으로 생성하여 메세지 Queue에 삽입
