@@ -17,7 +17,7 @@ void main()
 	InitializeSRWLock(&g_ListCs); // SRW(Slim Reader/Writer)Lock 초기화. SpinLock 방식
 	g_hEvent = CreateEvent(NULL, FALSE, FALSE, NULL); // 특정 스레드를 깨울 이벤트 설정
 
-  // 스레드 실행
+  	// 스레드 실행
 	HANDLE hUpdateThread[df_UPDATE_THREAD_MAX]; 
 	for (int iCnt = 0; iCnt < df_UPDATE_THREAD_MAX; ++iCnt)
 		hUpdateThread[iCnt] = (HANDLE)_beginthreadex(NULL, 0, UpdateThread, 0, 0, NULL);
@@ -38,15 +38,15 @@ void main()
     
 		if (_kbhit())
 		{
-      // Space 입력 시
+      			// Space 입력 시
 			if (_getwch() == L' ')
 			{
-        // Queue에 스레드 종료 메시지 삽입
+        			// Queue에 스레드 종료 메시지 삽입
 				stHeader.shType = df_TYPE_QUIT;
         
-        ////////////////////////////////////
-        // Queue에 삽입할 경우, 동기화 필수
-        ////////////////////////////////////
+				////////////////////////////////////
+				// Queue에 삽입할 경우, 동기화 필수
+				////////////////////////////////////
 				g_MsgQ.Lock(); 
 				if (g_MsgQ.GetFreeSize() >= sizeof(st_MSG_HEADER))
 					g_MsgQ.Enqueue((char*)&stHeader, sizeof(st_MSG_HEADER));
@@ -57,32 +57,32 @@ void main()
 			}
 		}
 
-    // 2. Queue에 메세지 삽입
-    ////////////////////////////////////
-    // Queue에 삽입할 경우, 동기화 필수
-    ////////////////////////////////////
+	   	// 2. Queue에 메세지 삽입
+	    	////////////////////////////////////
+	    	// Queue에 삽입할 경우, 동기화 필수
+	    	////////////////////////////////////
 		g_MsgQ.Lock();
 		if (g_MsgQ.GetFreeSize() >= sizeof(st_MSG_HEADER))
 			g_MsgQ.Enqueue((char*)&stHeader, sizeof(st_MSG_HEADER));
 		g_MsgQ.Unlock();
 
-    // 3. UpdateThread 깨우기
+    		// 3. UpdateThread 깨우기
 		SetEvent(g_hEvent);
 
 		// Queue에 메세지 삽입 간격
 		Sleep(df_INTERVAL_PUSH);
 	}
 
-  // 스레드 종료 대기
+  	// 스레드 종료 대기
 	WaitForMultipleObjects(df_UPDATE_THREAD_MAX, hUpdateThread, TRUE, INFINITE);
 	for (int iCnt = 0; iCnt < df_UPDATE_THREAD_MAX; ++iCnt)
 		CloseHandle(hUpdateThread[iCnt]); // 스레드 핸들 반환
 
-  // list에 남은 문자열이 있는지 확인
+  	// list에 남은 문자열이 있는지 확인
 	for (auto iter = g_List.begin(); iter != g_List.end(); ++iter)
 		wprintf(L"[%s] ", (*iter).c_str());
   
-  // 메세지 Queue에 처리 못한 메세지가 있는지 확인
+  	// 메세지 Queue에 처리 못한 메세지가 있는지 확인
 	wprintf(L"\nQ FreeSize: %d \n", g_MsgQ.GetFreeSize());
 
 	timeEndPeriod(1);
@@ -105,14 +105,14 @@ UINT WINAPI UpdateThread(LPVOID lpParam)
 
 		while (1)
 		{
-      ////////////////////////////////////
-      // Queue를 뽑을 경우, 동기화 필수
-      ////////////////////////////////////
+		      	////////////////////////////////////
+		      	// Queue를 뽑을 경우, 동기화 필수
+		      	////////////////////////////////////
 			g_MsgQ.Lock();
 			if (g_MsgQ.GetUseSize() < sizeof(st_MSG_HEADER))
 			{
-        // 동기화가 필요없을 경우, 반드시 Lock 해제
-        // -> 해제 안할 경우 Deadlock 발생
+				// 동기화가 필요없을 경우, 반드시 Lock 해제
+				// -> 해제 안할 경우 Deadlock 발생
 				g_MsgQ.Unlock();
 				break;
 			}
@@ -123,9 +123,9 @@ UINT WINAPI UpdateThread(LPVOID lpParam)
 			switch (stHeader.shType)
 			{
 			case df_TYPE_ADD_STR:
-        ////////////////////////////////////
-        // list에 삽입할 경우, 동기화 필수
-        ////////////////////////////////////
+				////////////////////////////////////
+				// list에 삽입할 경우, 동기화 필수
+				////////////////////////////////////
 				AcquireSRWLockExclusive(&g_ListCs);
 				g_List.push_back(stHeader.String);
 				ReleaseSRWLockExclusive(&g_ListCs);
@@ -134,18 +134,18 @@ UINT WINAPI UpdateThread(LPVOID lpParam)
 			case df_TYPE_DEL_STR:
 				if (!g_List.empty())
 				{
-          ////////////////////////////////////
-          // list에서 뽑을 경우, 동기화 필수
-          ////////////////////////////////////
+					////////////////////////////////////
+					// list에서 뽑을 경우, 동기화 필수
+					////////////////////////////////////
 					AcquireSRWLockExclusive(&g_ListCs);
 					g_List.pop_back();
 					ReleaseSRWLockExclusive(&g_ListCs);
 				}
 				break;
 			case df_TYPE_PRINT_LIST:
-        ////////////////////////////////////
-        // list를 순회할 경우, 동기화 필수
-        ////////////////////////////////////
+				////////////////////////////////////
+				// list를 순회할 경우, 동기화 필수
+				////////////////////////////////////
 				AcquireSRWLockShared(&g_ListCs);
 				wprintf(L"[%d]	# ", GetCurrentThreadId());
 				for (auto iter = g_List.begin(); iter != g_List.end(); ++iter)
