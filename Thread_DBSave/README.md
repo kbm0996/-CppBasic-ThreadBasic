@@ -15,9 +15,9 @@
 #### 📂 CDB : DB 관련
 > **📋 [CallHttp](https://github.com/kbm0996/-SystemLink-CPPxPHPxDB)** : UTF8↔UTF16 변환 함수, Domain↔IP 변환 함수, Http GET/POST 메세지 보내기 및 받기 함수
 >
-> **📋 [CDBConnector](https://github.com/kbm0996/-CppBasic-ThreadBasic/tree/master/Thread_DBSave/3%20Thread_DBSave)** : DB 연결, 쿼리 요청, 쿼리 결과 등 MySQL 클래스
+> **📋 CDBConnector** : DB 연결, 쿼리 요청, 쿼리 결과 등 MySQL 클래스
 >
-> **📋 [CDBConnector_TLS](https://github.com/kbm0996/-CppBasic-ThreadBasic/tree/master/Thread_DBSave/3%20Thread_DBSave)** : TLS버전 MySQL 클래스
+> **📋 CDBConnector_TLS** : TLS버전 MySQL 클래스
 
 #### 📂 CSystem : 로그, 미니덤프 관련
 > 📋 [CSystemLog](https://github.com/kbm0996/-Utility-SystemLog), 📋 [APIHook, CrashDump](https://github.com/kbm0996/-Utility-Crashdump)
