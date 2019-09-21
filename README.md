@@ -5,7 +5,7 @@
 ## 📑 구성
   자세한 내용은 하위 디렉토리 참조
 
-### 💻 [Thread_Basic](https://github.com/kbm0996/-CppBasic-ThreadBasic/tree/master/Thread_Basic)
+### 💻 [Thread_Basic](https://github.com/kbm0996/-CppBasic-ThreadBasic/blob/master/Thread_Basic/1%20Thread_Basic/main.cpp)
  g_Connect를 모니터링하는 `메인스레드`, int형 데이터 g_Connect를 증가시키는 `AcceptThread`, g_Connect를 감소시키는 `DisconnectThread`, g_Data를 증가시키고 1000 단위로 출력하는 `n개의 UpdateThread`. **CriticalSection**을 이용한 동기화 시험
 
   
